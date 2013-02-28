@@ -61,7 +61,7 @@ module Photofy
       end
 
       define_method "#{@photo_field}_persisted?" do
-        (@file_buffer.nil? and File.exist?(send("#{self.class.photo_field}_path")))
+        (@file_buffer.nil? and File.file?(send("#{self.class.photo_field}_path")))
       end
 
       define_method "#{@photo_field}_store!" do
