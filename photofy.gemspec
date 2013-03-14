@@ -18,3 +18,5 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/praveenkumarsinha/Photofy'
 end
 
+
+
