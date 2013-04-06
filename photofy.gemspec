@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'photofy'
-  s.version     = '0.1.2'
-  s.date        = '2012-03-15'
+  s.version     = '0.1.3'
+  s.date        = '2012-04-07'
   s.summary     = "Photofy"
   s.description = "A gem to provide simple method to do file upload of pictures and provides getter setter methods of it and save on model object commit.
     #Generates photo filed from photo_field arguments and provides methods like

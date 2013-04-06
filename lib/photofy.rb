@@ -33,7 +33,7 @@ module Photofy
 
       define_method "#{photo_field}_path" do
         directoy_path = FileUtils.mkdir_p File.join(self.class.photo_repository, self.class.photo_field.to_s)
-        File.join(directoy_path, "#{photo_field}.jpg")
+        File.join(directoy_path, "#{photo_field}_#{self.send(self.class.primary_key)}.jpg")
       end
 
       define_method "process_n_save_#{photo_field}" do
