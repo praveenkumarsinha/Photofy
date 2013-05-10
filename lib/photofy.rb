@@ -26,6 +26,7 @@ module Photofy
     #will give a 'stamp' attribute which on save of main photo filed will scale it to 25 x 25 dimesnions
     #after_photofy :portfolio, Proc.new{|img| img.scale(150, 250)}
     #will give a 'portfolio' attribute which on save of main photo filed will scale it to 150 x 250 dimesnions
+    #and also provide 're_photofy_portfolio!'(Proc.new{|img| img.scale(10, 20)}) to perform operation on other user defined events
     def after_photofy(photo_field, p = Proc.new { |img| puts "Rmagick image: #{img.inspect}" })
       define_method "#{photo_field}" do
         File.exist?(send("#{photo_field}_path")) ? File.read(send("#{photo_field}_path")) : nil
