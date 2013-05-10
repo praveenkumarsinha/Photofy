@@ -36,12 +36,20 @@ module Photofy
         File.join(directoy_path, "#{photo_field}_#{self.send(self.class.primary_key)}.jpg")
       end
 
-      define_method "process_n_save_#{photo_field}" do
+      define_method "re_photofy_#{photo_field}!" do |proc|
+        send("process_n_save_#{photo_field}", proc)
+      end
+
+      define_method "process_and_save_#{photo_field}!" do
+        send("process_n_save_#{photo_field}", p)
+      end
+
+      define_method "process_n_save_#{photo_field}" do |proc|
         begin
           mphoto_f = self.class.photo_field
           if File.exist?(send("#{mphoto_f}_path"))
             img = Magick::Image.read(send("#{mphoto_f}_path")).first # path of Orignal image that has to be worked upon
-            img = p.call(img)
+            img = proc.call(img)
             img.write(send("#{photo_field}_path"))
           end
         rescue Exception => e
@@ -54,7 +62,7 @@ module Photofy
         File.delete(send("#{photo_field}_path")) if File.exist?(send("#{photo_field}_path"))
       end
 
-      send(:after_save, "process_n_save_#{photo_field}")
+      send(:after_save, "process_and_save_#{photo_field}!")
       send(:after_destroy, "destroy_#{photo_field}")
     end
 
