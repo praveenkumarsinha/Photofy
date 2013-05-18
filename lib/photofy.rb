@@ -84,6 +84,7 @@ module Photofy
     #Generates photo filed from photo_field arguments and provides methods like
     #if photo_filed is "collage" then it provides methods on top of it as
     #collage >> Getter,
+    #collage? >> Returns true if collage is having value other than nil else false,
     #collage =  >> Setter. Accepted inputs are file upload(ActionDispatch::Http::UploadedFile), filer handle and String(format validation is ignored),
     #collage_path >> Getter of filepath,
     #collage_persisted? >> true if provided file/data is stored on disk,

@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'photofy'
-  s.version     = '0.1.4'
-  s.date        = '2013-05-10'
+  s.version     = '0.1.5'
+  s.date        = '2013-05-18'
   s.summary     = "Photofy"
   s.description = "A gem to provide simple method to do file upload of pictures and provides getter setter methods of it and save on model object commit.
     #Generates photo filed from photo_field arguments and provides methods like
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Praveen Kumar Sinha", "Annu Yadav"]
   s.email       = 'praveen.kumar.sinha@gmail.com'
   s.files       = ["lib/photofy.rb"]
-  s.homepage    = 'https://github.com/praveenkumarsinha/Photofy'
+  s.homepage    = 'http://praveenkumarsinha.github.io/Photofy'
 end
 
 
