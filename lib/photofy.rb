@@ -32,6 +32,10 @@ module Photofy
         File.exist?(send("#{photo_field}_path")) ? File.read(send("#{photo_field}_path")) : nil
       end
 
+      define_method "#{photo_field}?" do
+        send("#{photo_field}").nil? ? false : true
+      end
+
       define_method "#{photo_field}_path" do
         directoy_path = FileUtils.mkdir_p File.join(self.class.photo_repository, self.class.photo_field.to_s)
         File.join(directoy_path, "#{photo_field}_#{self.send(self.class.primary_key)}.jpg")
@@ -98,6 +102,10 @@ module Photofy
 
       define_method "#{@photo_field}" do
         @file_buffer.nil? ? (send("#{self.class.photo_field}_persisted?") ? File.read(send("#{self.class.photo_field}_path")) : nil) : @file_buffer
+      end
+
+      define_method "#{@photo_field}?" do
+        send("#{self.class.photo_field}").nil? ? false : true
       end
 
       define_method "#{@photo_field}=" do |file_upload|
