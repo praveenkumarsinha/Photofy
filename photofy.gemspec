@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'photofy'
-  s.version     = '0.1.5'
-  s.date        = '2013-05-18'
+  s.version     = '0.1.6'
+  s.date        = '2014-03-06'
   s.summary     = "Photofy"
   s.description = "A gem to provide simple method to do file upload of pictures and provides getter setter methods of it and save on model object commit.
     #Generates photo filed from photo_field arguments and provides methods like
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
     #collage_persisted? >> true if provided file/data is stored on disk,
     #collage_store! >> to store provided  file/data on disk,
     #collage_destroy! >> to store destroy stored file/data from disk"
-  s.authors     = ["Praveen Kumar Sinha", "Annu Yadav"]
+  s.authors     = ["Praveen Kumar Sinha", "Annu Yadav", "sachin choudhary"]
   s.email       = 'praveen.kumar.sinha@gmail.com'
   s.files       = ["lib/photofy.rb"]
   s.homepage    = 'http://praveenkumarsinha.github.io/Photofy'
