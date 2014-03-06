@@ -27,18 +27,18 @@ module Photofy
     #will give a 'portfolio' attribute which on save of main photo filed will scale it to 150 x 250 dimesnions
     #and also provide 're_photofy_portfolio!'(Proc.new{|img| img.scale(10, 20)}) to perform operation on other user defined events
     def after_photofy(photo_field, p = Proc.new { |img| puts "Rmagick image: #{img.inspect}" })
-      define_method "#{photo_field}" do
-        File.exist?(send("#{photo_field}_path")) ? File.read(send("#{photo_field}_path")) : nil
-      end
+      #define_method "#{photo_field}" do
+      #  File.exist?(send("#{photo_field}_path")) ? File.read(send("#{photo_field}_path")) : nil
+      #end
 
-      define_method "#{photo_field}?" do
-        send("#{photo_field}").nil? ? false : true
-      end
+      #define_method "#{photo_field}?" do
+      #  send("#{photo_field}").nil? ? false : true
+      #end
 
-      define_method "#{photo_field}_cover_path" do
-        directoy_path = FileUtils.mkdir_p File.join(self.class.photo_repository, photo_field.to_s)
-        File.join(directoy_path, "#{photo_field}_#{self.send(self.class.primary_key)}.jpg")
-      end
+      #define_method "#{photo_field}_cover_path" do
+      #  directoy_path = FileUtils.mkdir_p File.join(self.class.photo_repository, photo_field.to_s)
+      #  File.join(directoy_path, "#{photo_field}_#{self.send(self.class.primary_key)}.jpg")
+      #end
 
       define_method "re_photofy_#{photo_field}!" do |proc|
         send("process_n_save_#{photo_field}", proc)
@@ -53,7 +53,7 @@ module Photofy
           if File.exist?(send("#{photo_field}_path"))
             img = Magick::Image.read(send("#{photo_field}_path")).first # path of Orignal image that has to be worked upon
             img = proc.call(img)
-            img.write(send("#{photo_field}_cover_path"))
+            img.write(send("#{photo_field}_path"))
           end
         rescue Exception => e
           puts "Unable to process_n_save_#{photo_field} due to #{e.message}"
@@ -62,7 +62,7 @@ module Photofy
       end
 
       define_method "destroy_#{photo_field}" do
-        File.delete(send("#{photo_field}_cover_path")) if File.exist?(send("#{photo_field}_cover_path"))
+        File.delete(send("#{photo_field}_path")) if File.exist?(send("#{photo_field}_path"))
       end
 
       send(:after_save, "process_and_save_#{photo_field}!")
