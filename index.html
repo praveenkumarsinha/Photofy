@@ -31,9 +31,82 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>Photofy</h1>
+        <h2>
+<a name="photofy" class="anchor" href="#photofy"><span class="octicon octicon-link"></span></a>Photofy</h2>
 
-<p>A gem to provide simple method to do fileupload of pictures and provides getter setter methods of it and save on model object commit</p>
+<p>A simple ruby gem providing photo fields to rails model</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Add this line to your application's Gemfile:</p>
+
+<p><code>gem 'photofy'</code></p>
+
+<p>And then execute:</p>
+
+<p><code>$ bundle</code></p>
+
+<p>Or install it yourself as:</p>
+
+<p><code>$ gem install photofy</code></p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Add photo field(s) to model by adding lines like</p>
+
+<ul>
+<li>
+<p><code>photofy(:collage)</code></p>
+
+<blockquote>
+<ul>
+<li>
+<code>collage</code> : Getter,</li>
+<li>
+<code>collage?</code> : Returns true if assignment is having value other than nil else false,</li>
+<li>
+<code>collage =</code> : Setter. Acceptable inputs are file upload(ActionDispatch::Http::UploadedFile), file and String(format validation is ignored),</li>
+<li>
+<code>collage_path</code> : File path of assignment,</li>
+<li>
+<code>collage_persisted?</code> : Gives true if provided file/data is stored on disk,</li>
+<li>
+<code>collage_store!</code> : To store provided file/data on disk,</li>
+<li>
+<code>collage_destroy!</code> : To destroy stored file/data from disk</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p><code>photofy(:collage_sec, {parent_photo_field: :collage})</code></p>
+
+<blockquote>
+<ul>
+<li>Automatically creates a collage_sec photo field from :collage parent field</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p><code>photofy(:stamp, {image_processor: Proc.new { |img| img.scale(25, 25) }})</code></p>
+
+<blockquote>
+<ul>
+<li>Process image to scale(refer imagemagick/rmagick for other image manipulations) of 25x25px when image is saved.</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p><code>after_photofy :collage, :post_card, Proc.new { |img| img.scale(450, 200) }</code></p>
+
+<blockquote>
+<ul>
+<li>Creates 'post_card' photo field by taking source from 'collage' and scaling it to 450x200px.</li>
+</ul>
+</blockquote>
+</li>
+</ul>
       </section>
     </div>
 
