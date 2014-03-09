@@ -4,7 +4,7 @@ A simple ruby gem providing photo fields to rails model
 ## Installation
 Add this line to your application's Gemfile:
 
-`gem 'zero_authorization'`
+`gem 'photofy'`
 
 And then execute:
 
@@ -12,7 +12,7 @@ And then execute:
 
 Or install it yourself as:
 
-`$ gem install zero_authorization`
+`$ gem install photofy`
 
 
 ## Usage
