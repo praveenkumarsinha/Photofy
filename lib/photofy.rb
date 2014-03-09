@@ -1,3 +1,9 @@
+begin
+  require "RMagick"
+rescue Exception => e
+  puts "Unable to load 'RMagick' for any image manipulations methods"
+end
+
 module Photofy
   def self.included(base)
     base.extend(ClassMethods)
