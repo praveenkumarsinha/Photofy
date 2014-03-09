@@ -128,7 +128,9 @@ module Photofy
         send('initialize_photo_buffers')
 
         #Loading content from parent_photo_field if specified
-        send("#{photo_field}=", File.open(send("#{parent_photo_field}_path"))) unless parent_photo_field.nil?
+        unless parent_photo_field.nil?
+          send("#{photo_field}=", File.open(send("#{parent_photo_field}_path"))) if File.exist?(send("#{parent_photo_field}_path"))
+        end
 
         unless @photo_file_buffer[photo_field].nil?
           File.delete(send("#{photo_field}_path")) if File.exist?(send("#{photo_field}_path")) #Clearing any existing existence
