@@ -1,4 +1,5 @@
 require 'singleton'
+require 'aws-sdk'
 
 module Photofy
 
