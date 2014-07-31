@@ -22,6 +22,7 @@ Add photo field(s) to model by adding lines like
 > * `collage?` : Returns true if assignment is having value other than nil else false,
 > * `collage =` : Setter. Acceptable inputs are file upload(ActionDispatch::Http::UploadedFile), file and String(format validation is ignored),
 > * `collage_path` : File path of assignment,
+> * `collage_s3publicpath` : Public aws s3 url provider if (aws s3 is used as storage)
 > * `collage_persisted?` : Gives true if provided file/data is stored on disk,
 > * `collage_store!` : To store provided file/data on disk,
 > * `collage_destroy!` : To destroy stored file/data from disk
@@ -35,3 +36,5 @@ Add photo field(s) to model by adding lines like
 * `after_photofy :collage, :post_card, Proc.new { |img| img.scale(450, 200) }`
 > * Creates 'post_card' photo field by taking source from 'collage' and scaling it to 450x200px.
 
+Enables aws s3 as backend storage.
+* `photofy_s3_storage({access_key_id: 'xxxxxxxx',secret_access_key: 'xxxxxxxx'}, {bucket: 'test_bucket'})`
