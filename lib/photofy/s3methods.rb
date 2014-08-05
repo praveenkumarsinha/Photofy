@@ -12,7 +12,7 @@ module Photofy
 
   module S3Methods
     def self.extended(base)
-      base.include(InstanceMethods)
+      base.send(:include, InstanceMethods)
     end
 
     module InstanceMethods
