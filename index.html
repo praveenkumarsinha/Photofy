@@ -2,9 +2,9 @@
 <html>
 
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Photofy : A gem to provide simple method to do fileupload of pictures and provides getter setter methods of it and save on model object commit" />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Photofy : A gem to provide simple method to do fileupload of pictures and provides getter setter methods of it and save on model object commit">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -71,6 +71,8 @@
 <li>
 <code>collage_path</code> : File path of assignment,</li>
 <li>
+<code>collage_s3publicpath</code> : Public aws s3 url provider if (aws s3 is used as storage)</li>
+<li>
 <code>collage_persisted?</code> : Gives true if provided file/data is stored on disk,</li>
 <li>
 <code>collage_store!</code> : To store provided file/data on disk,</li>
@@ -106,6 +108,10 @@
 </ul>
 </blockquote>
 </li>
+</ul><p>Enables aws s3 as backend storage.</p>
+
+<ul>
+<li><code>photofy_s3_storage({access_key_id: 'xxxxxxxx',secret_access_key: 'xxxxxxxx'}, {bucket: 'test_bucket'})</code></li>
 </ul>
       </section>
     </div>
