@@ -17,7 +17,9 @@ Or install it yourself as:
 
 ## Usage
 Add photo field(s) to model by adding lines like
-* `photofy(:collage)`
+
+`photofy(:collage)`
+
 > * `collage` : Getter,
 > * `collage?` : Returns true if assignment is having value other than nil else false,
 > * `collage =` : Setter. Acceptable inputs are file upload(ActionDispatch::Http::UploadedFile), file and String(format validation is ignored),
