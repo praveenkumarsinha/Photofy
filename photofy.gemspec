@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'photofy'
-  s.version = '0.2.0'
-  s.date = '2014-07-31'
+  s.version = '0.2.1'
+  s.date = '2014-08-05'
   s.summary = "Photofy"
   s.description = <<-EOF
     A gem to provide simple method to do file upload of pictures and provides getter setter methods of it and save on model object commit.

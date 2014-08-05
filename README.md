@@ -27,14 +27,16 @@ Add photo field(s) to model by adding lines like
 > * `collage_store!` : To store provided file/data on disk,
 > * `collage_destroy!` : To destroy stored file/data from disk
 
-* `photofy(:collage_sec, {parent_photo_field: :collage})`
-> * Automatically creates a collage_sec photo field from :collage parent field
 
-* `photofy(:stamp, {image_processor: Proc.new { |img| img.scale(25, 25) }})`
-> * Process image to scale(refer imagemagick/rmagick for other image manipulations) of 25x25px when image is saved.
+`photofy(:collage_sec, {parent_photo_field: :collage})`
+> Automatically creates a collage_sec photo field from :collage parent field
 
-* `after_photofy :collage, :post_card, Proc.new { |img| img.scale(450, 200) }`
-> * Creates 'post_card' photo field by taking source from 'collage' and scaling it to 450x200px.
+`photofy(:stamp, {image_processor: Proc.new { |img| img.scale(25, 25) }})`
+> Process image to scale(refer imagemagick/rmagick for other image manipulations) of 25x25px when image is saved.
 
-Enables aws s3 as backend storage.
-* `photofy_s3_storage({access_key_id: 'xxxxxxxx',secret_access_key: 'xxxxxxxx'}, {bucket: 'test_bucket'})`
+`after_photofy :collage, :post_card, Proc.new { |img| img.scale(450, 200) }`
+> Creates 'post_card' photo field by taking source from 'collage' and scaling it to 450x200px.
+
+Enables aws s3 as backend storage (may be in initializer).
+
+`ActiveRecord::Base.photofy_s3_storage({access_key_id: 'xxxxxxxx',secret_access_key: 'xxxxxxxx'}, {bucket: 'test_bucket'})`
