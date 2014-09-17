@@ -64,10 +64,10 @@ module Photofy
           _path = File.join(directory_path, self.send(self.class.primary_key).to_s)
           _path.gsub!(/^#{Rails.root}\//, "")
 
-          (_s3_objects = s3_bucket.objects.with_prefix("#{_path}_")).count > 0 ? _s3_objects.collect(&:key)[0] : nil
+          (_s3_objects = s3_bucket.objects.with_prefix("#{_path}_")).count > 0 ? _s3_objects.collect(&:key)[0] : ''
         else
           (guessed_file = Dir[File.join(directory_path, "#{self.send(self.class.primary_key).to_s}_*")].first).nil? ?
-              nil : guessed_file.to_s
+              '' : guessed_file.to_s
         end
       end
 
@@ -157,7 +157,7 @@ module Photofy
         #Loading content from parent_photo_field if specified
         unless parent_photo_field.nil?
           if s3_connected?
-            unless send("#{parent_photo_field}_path").nil?
+            unless send("#{parent_photo_field}_path").empty?
               _parent_file_path = send("#{parent_photo_field}_path")
               _temp_file_path = File.join(Rails.root, File.basename(_parent_file_path))
               file = File.open(_temp_file_path, 'wb')
@@ -169,14 +169,14 @@ module Photofy
               File.delete(file.path)
             end
           else
-            send("#{photo_field}=", File.open(send("#{parent_photo_field}_path"))) unless send("#{parent_photo_field}_path").nil?
+            send("#{photo_field}=", File.open(send("#{parent_photo_field}_path"))) unless send("#{parent_photo_field}_path").empty?
           end
         end
 
         unless @photo_file_buffer[photo_field].nil?
 
           if s3_connected?
-            s3_bucket.objects[send("#{photo_field}_path")].try(:delete) if (not send("#{photo_field}_path").nil?) and (s3_bucket.objects.with_prefix(send("#{photo_field}_path")).count > 0)
+            s3_bucket.objects[send("#{photo_field}_path")].try(:delete) if (not send("#{photo_field}_path").empty?) and (s3_bucket.objects.with_prefix(send("#{photo_field}_path")).count > 0)
             s3_bucket.objects[send("#{photo_field}_path_to_write")].write(@photo_file_buffer[photo_field])
 
             unless proc.nil?
@@ -192,7 +192,7 @@ module Photofy
               file.unlink # deletes the temp file
             end
           else
-            File.delete(send("#{photo_field}_path")) if ((not send("#{photo_field}_path").nil?) and File.exist?(send("#{photo_field}_path"))) #Clearing any existing file at the path
+            File.delete(send("#{photo_field}_path")) if  File.exist?(send("#{photo_field}_path")) #Clearing any existing file at the path
             File.open(send("#{photo_field}_path_to_write"), "wb+") { |f| f.puts(@photo_file_buffer[photo_field]) }
 
             unless proc.nil?
