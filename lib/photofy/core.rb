@@ -28,6 +28,7 @@ module Photofy
 
     #Example
     #photofy(:door)
+    #photofy(:door, message: "Some message to show as error when invalid file(w.r.t format) will be used in setter/assignment method")
     #photofy(:small_door, {parent_photo_field: :door})
     #photofy(:window, {image_processor: Proc.new { |img| img.scale(25, 25) }})
     #after_photofy :door, :ventilator, Proc.new { |img| img.scale(25, 25) }
@@ -48,10 +49,20 @@ module Photofy
     #image_processor: a proc for image processing like Proc.new { |img| img.scale(25, 25) }
     #parent_photo_field: a parent photo field name to be used as source
     def photofy(photo_field, options = {})
+      (options ||={})[:message] ||= "Not from valid set of allowed file types"
+
       collect_photo_formats(photo_field, options)
+
+      self.validate "validate_#{photo_field}_field"
 
       @photo_fields ||=[]
       @photo_fields << photo_field
+
+      define_method "validate_#{photo_field}_field" do
+        (@photo_fields_errors ||={}).each do |field, message|
+          errors.add(field.to_sym, message)
+        end
+      end
 
       define_method 'initialize_photo_buffers' do
         @photo_file_buffer ||= {}
@@ -117,18 +128,33 @@ module Photofy
         send('initialize_photo_buffers')
 
         if file_upload.class == ActionDispatch::Http::UploadedFile
-          return false unless self.class.photo_formats[photo_field].include?(File.extname(file_upload.original_filename).downcase)
+          unless self.class.photo_formats[photo_field].include?(File.extname(file_upload.original_filename).downcase)
+            (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
+            return false
+          else
+            (@photo_fields_errors ||= {}).delete(photo_field.to_sym)
+          end
           @photo_file_buffer[photo_field] = File.read(file_upload.path)
           @photo_file_ofn[photo_field] = File.basename(file_upload.original_filename)
 
         elsif file_upload.class == File
-          return false unless self.class.photo_formats[photo_field].include?(File.extname(file_upload.path).downcase)
+          unless self.class.photo_formats[photo_field].include?(File.extname(file_upload.path).downcase)
+            (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
+            return false
+          else
+            (@photo_fields_errors ||= {}).delete(photo_field.to_sym)
+          end
           @photo_file_buffer[photo_field] = file_upload.read
           @photo_file_ofn[photo_field] = File.basename(file_upload.path)
 
           file_upload.rewind
         elsif file_upload.class == String
-          #return false unless self.class.photo_formats[photo_field].include?(File.extname(file_upload).downcase)
+          #unless self.class.photo_formats[photo_field].include?(File.extname(file_upload).downcase)
+          #  (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
+          #  return false
+          #else
+          #  (@photo_fields_errors ||= {}).delete(photo_field.to_sym)
+          #end
           @photo_file_buffer[photo_field] = file_upload
           #@photo_file_ofn[photo_field] = File.basename(file_upload.path) #As there is nothing like original_file_name for a string :)
         end
