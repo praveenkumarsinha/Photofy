@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'photofy'
-  s.version = '0.3.2'
+  s.version = '0.3.1'
   s.date = '2014-11-06'
   s.summary = "Photofy"
   s.description = <<-EOF
