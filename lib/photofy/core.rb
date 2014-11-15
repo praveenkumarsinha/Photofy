@@ -51,8 +51,6 @@ module Photofy
     def photofy(photo_field, options = {})
       (options ||={})[:message] ||= "Not from valid set of allowed file types"
 
-      collect_photo_formats(photo_field, options)
-
       self.validate "validate_#{photo_field}_field"
 
       @photo_fields ||=[]
@@ -67,6 +65,16 @@ module Photofy
       define_method 'initialize_photo_buffers' do
         @photo_file_buffer ||= {}
         @photo_file_ofn ||= {}
+      end
+
+      #Collects valid photo formats specific to photo fields
+      define_method 'collect_photo_formats' do |photo_field, options|
+        if options.is_a?(Hash)
+          @photo_formats ||= {}
+          @photo_formats[photo_field] = options[:formats].is_a?(Array) ? options[:formats].collect { |x| x.starts_with?(".") ? x : ".#{x}" } : [".jpeg", ".jpg", ".gif", ".png", ".bmp"]
+        else
+          raise 'InvalidArguments'
+        end
       end
 
       define_method "#{photo_field}_path" do
@@ -96,6 +104,7 @@ module Photofy
       #Defining getter
       define_method "#{photo_field}" do
         send('initialize_photo_buffers')
+        send('collect_photo_formats', photo_field, options)
 
         if @photo_file_buffer[photo_field].nil?
           if  s3_connected?
@@ -126,9 +135,10 @@ module Photofy
       #Defining setter
       define_method "#{photo_field}=" do |file_upload|
         send('initialize_photo_buffers')
+        send('collect_photo_formats', photo_field, options)
 
         if file_upload.class == ActionDispatch::Http::UploadedFile
-          unless self.class.photo_formats[photo_field].include?(File.extname(file_upload.original_filename).downcase)
+          unless @photo_formats[photo_field].include?(File.extname(file_upload.original_filename).downcase)
             (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
             return false
           else
@@ -138,7 +148,7 @@ module Photofy
           @photo_file_ofn[photo_field] = File.basename(file_upload.original_filename)
 
         elsif file_upload.class == File
-          unless self.class.photo_formats[photo_field].include?(File.extname(file_upload.path).downcase)
+          unless @photo_formats[photo_field].include?(File.extname(file_upload.path).downcase)
             (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
             return false
           else
@@ -149,7 +159,7 @@ module Photofy
 
           file_upload.rewind
         elsif file_upload.class == String
-          #unless self.class.photo_formats[photo_field].include?(File.extname(file_upload).downcase)
+          #unless @photo_formats[photo_field].include?(File.extname(file_upload).downcase)
           #  (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
           #  return false
           #else
@@ -258,16 +268,6 @@ module Photofy
 
     def photos_repository
       @photos_repository ||= FileUtils.mkdir_p(File.join(Rails.root, "photofy", self.name))[0]
-    end
-
-    #Collects valid photo formats specific to photo fields
-    def collect_photo_formats(photo_field, options)
-      if options.is_a?(Hash)
-        @photo_formats ||= {}
-        @photo_formats[photo_field] = options[:formats].is_a?(Array) ? options[:formats].collect { |x| x.starts_with?(".") ? x : ".#{x}" } : [".jpeg", ".jpg", ".gif", ".png", ".bmp"]
-      else
-        raise 'InvalidArguments'
-      end
     end
 
   end
