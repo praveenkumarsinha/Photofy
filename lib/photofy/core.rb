@@ -1,13 +1,12 @@
 module Photofy
   module Core
-    attr_accessor :photofied_flag
-    attr_accessor :photo_fields
-    attr_accessor :photos_repository
-    attr_accessor :photo_formats
+    cattr_accessor :photofied_flag
+    cattr_accessor :photo_fields
+    cattr_accessor :photo_formats
 
     #Getter to check if model is enabled with file_folder
     def is_photofied?
-      @photofied_flag.nil? ? false : @photofied_flag
+      @@photofied_flag.nil? ? false : @@photofied_flag
     end
 
     #Generates photo field which can be used to store a post processed image(using rmagick) of parent photo field.
@@ -55,8 +54,8 @@ module Photofy
 
       self.validate "validate_#{photo_field}_field"
 
-      @photo_fields ||=[]
-      @photo_fields << photo_field
+      @@photo_fields ||=[]
+      @@photo_fields << photo_field
 
       define_method "validate_#{photo_field}_field" do
         (@photo_fields_errors ||={}).each do |field, message|
@@ -253,18 +252,18 @@ module Photofy
       send(:after_save, "#{photo_field}_store!")
       send(:after_destroy, "#{photo_field}_destroy!")
 
-      @photofied_flag = true
+      @@photofied_flag = true
     end
 
     def photos_repository
-      @photos_repository ||= FileUtils.mkdir_p(File.join(Rails.root, "photofy", self.name))[0]
+      FileUtils.mkdir_p(File.join(Rails.root, "photofy", self.name.underscore))[0]
     end
 
     #Collects valid photo formats specific to photo fields
     def collect_photo_formats(photo_field, options)
       if options.is_a?(Hash)
-        @photo_formats ||= {}
-        @photo_formats[photo_field] = options[:formats].is_a?(Array) ? options[:formats].collect { |x| x.starts_with?(".") ? x : ".#{x}" } : [".jpeg", ".jpg", ".gif", ".png", ".bmp"]
+        @@photo_formats ||= {}
+        @@photo_formats[photo_field] = options[:formats].is_a?(Array) ? options[:formats].collect { |x| x.starts_with?(".") ? x : ".#{x}" } : [".jpeg", ".jpg", ".gif", ".png", ".bmp"]
       else
         raise 'InvalidArguments'
       end
