@@ -1,4 +1,4 @@
-require 'photofy/s3methods'
+require 'photofy/dummy_s3methods'
 require 'photofy/core'
 require 'tempfile'
 begin
@@ -9,7 +9,7 @@ end
 
 module Photofy
   def self.included(base)
-    base.extend(S3Methods)
+    base.extend(DummyS3Methods)
     base.extend(Core)
   end
 end

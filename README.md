@@ -39,6 +39,3 @@ Add photo field(s) to model by adding lines like
 `after_photofy :collage, :post_card, Proc.new { |img| img.scale(450, 200) }`
 > Creates 'post_card' photo field by taking source from 'collage' and scaling it to 450x200px.
 
-Enables aws s3 as backend storage (may be in initializer).
-
-`ActiveRecord::Base.photofy_s3_storage({access_key_id: 'xxxxxxxx',secret_access_key: 'xxxxxxxx'}, {bucket: 'test_bucket'})`
