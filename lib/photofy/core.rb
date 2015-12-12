@@ -1,8 +1,8 @@
 module Photofy
   module Core
-    cattr_accessor :photofied_flag
-    cattr_accessor :photo_fields
-    cattr_accessor :photo_formats
+    mattr_accessor :photofied_flag
+    mattr_accessor :photo_fields
+    mattr_accessor :photo_formats
 
     #Getter to check if model is enabled with file_folder
     def is_photofied?
