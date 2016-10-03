@@ -52,7 +52,7 @@ module Photofy
 
       collect_photo_formats(photo_field, options)
 
-      self.validate "validate_#{photo_field}_field"
+      self.validate "validate_#{photo_field}_field".to_sym
 
       @@photo_fields ||=[]
       @@photo_fields << photo_field
@@ -249,8 +249,8 @@ module Photofy
         end
       end
 
-      send(:after_save, "#{photo_field}_store!")
-      send(:after_destroy, "#{photo_field}_destroy!")
+      send(:after_save, "#{photo_field}_store!".to_sym)
+      send(:after_destroy, "#{photo_field}_destroy!".to_sym)
 
       @@photofied_flag = true
     end
