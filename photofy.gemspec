@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors = ["Praveen Kumar Sinha", "Annu Yadav", "Sachin Choudhary"]
   s.email = 'praveen.kumar.sinha@gmail.com'
   s.files = Dir["{lib}/**/*", "README.md"]
-  s.licenses = ['MIT', 'GPL-2']
+  s.licenses = ['MIT', 'GPL-2.0']
   s.homepage = 'http://praveenkumarsinha.github.io/Photofy'
   s.post_install_message = "Thanks for installing Photofy."
 end
