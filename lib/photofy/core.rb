@@ -21,7 +21,7 @@ module Photofy
     #will give a 'stamp' attribute which on save of 'profile' photo field will scale it to 25 x 25 dimensions
     #after_photofy :profile, :portfolio, Proc.new{|img| img.scale(150, 250)}
     #will give a 'portfolio' attribute which on save of 'profile' photo field will scale it to 150 x 250 dimensions
-    def after_photofy(parent_photo_field, photo_field, proc = Proc.new { |img| puts "Rmagick image: #{img.inspect}" })
+    def after_photofy(parent_photo_field, photo_field, proc = Proc.new {|img| puts "Rmagick image: #{img.inspect}"})
       photofy(photo_field, image_processor: proc, parent_photo_field: parent_photo_field)
     end
 
@@ -97,11 +97,11 @@ module Photofy
         send('initialize_photo_buffers')
 
         if @photo_file_buffer[photo_field].nil?
-          if  s3_connected?
+          if s3_connected?
             if send("#{photo_field}_persisted?")
               _file = nil
               file = Tempfile.new('foo', :encoding => 'ascii-8bit')
-              s3_bucket.objects[send("#{photo_field}_path")].read { |chunk| file.write(chunk) }
+              s3_bucket.objects[send("#{photo_field}_path")].read {|chunk| file.write(chunk)}
               file.rewind
               _file = file.read
               file.close
@@ -148,14 +148,27 @@ module Photofy
 
           file_upload.rewind
         elsif file_upload.class == String
-          #unless self.class.photo_formats[photo_field].include?(File.extname(file_upload).downcase)
-          #  (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
-          #  return false
-          #else
-          #  (@photo_fields_errors ||= {}).delete(photo_field.to_sym)
-          #end
-          @photo_file_buffer[photo_field] = file_upload
-          #@photo_file_ofn[photo_field] = File.basename(file_upload.path) #As there is nothing like original_file_name for a string :)
+
+          # For handling base 64 encoded image
+          if file_upload.match(/\Adata:([-\w]+\/[-\w\+\.]+)?;base64,/)
+            file_upload_parts = file_upload.match(/\Adata:([-\w]+\/[-\w\+\.]+)?;base64,(.*)/m) || []
+            extension = MIME::Types[file_upload_parts[1]].first.preferred_extension
+
+            unless self.class.photo_formats[photo_field].include?(".#{extension}")
+              (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
+              return false
+            else
+              (@photo_fields_errors ||= {}).delete(photo_field.to_sym)
+            end
+
+            @photo_file_buffer[photo_field] = Base64.decode64(file_upload_parts[2])
+            @photo_file_ofn[photo_field] = "#{SecureRandom.uuid}.#{extension}"
+
+          else
+            @photo_file_buffer[photo_field] = file_upload
+
+          end
+
         end
 
         file_upload
@@ -186,7 +199,7 @@ module Photofy
               _parent_file_path = send("#{parent_photo_field}_path")
               _temp_file_path = File.join(Rails.root, File.basename(_parent_file_path))
               file = File.open(_temp_file_path, 'wb')
-              s3_bucket.objects[_parent_file_path].read { |chunk| file.write(chunk) }
+              s3_bucket.objects[_parent_file_path].read {|chunk| file.write(chunk)}
               file.close
               file = File.open(_temp_file_path)
               send("#{photo_field}=", file)
@@ -206,7 +219,7 @@ module Photofy
 
             unless proc.nil?
               file = Tempfile.new('foo', :encoding => 'ascii-8bit')
-              s3_bucket.objects[send("#{photo_field}_path")].read { |chunk| file.write(chunk) }
+              s3_bucket.objects[send("#{photo_field}_path")].read {|chunk| file.write(chunk)}
               file.rewind
 
               img = Magick::Image.read(file.path).first
@@ -217,8 +230,8 @@ module Photofy
               file.unlink # deletes the temp file
             end
           else
-            File.delete(send("#{photo_field}_path")) if  File.exist?(send("#{photo_field}_path")) #Clearing any existing file at the path
-            File.open(send("#{photo_field}_path_to_write"), "wb+") { |f| f.puts(@photo_file_buffer[photo_field]) }
+            File.delete(send("#{photo_field}_path")) if File.exist?(send("#{photo_field}_path")) #Clearing any existing file at the path
+            File.open(send("#{photo_field}_path_to_write"), "wb+") {|f| f.puts(@photo_file_buffer[photo_field])}
 
             unless proc.nil?
               FileUtils.copy(send("#{photo_field}_path_to_write"), send("#{photo_field}_path_to_write", "original_source"))
@@ -263,7 +276,7 @@ module Photofy
     def collect_photo_formats(photo_field, options)
       if options.is_a?(Hash)
         @@photo_formats ||= {}
-        @@photo_formats[photo_field] = options[:formats].is_a?(Array) ? options[:formats].collect { |x| x.starts_with?(".") ? x : ".#{x}" } : [".jpeg", ".jpg", ".gif", ".png", ".bmp"]
+        @@photo_formats[photo_field] = options[:formats].is_a?(Array) ? options[:formats].collect {|x| x.starts_with?(".") ? x : ".#{x}"} : [".jpeg", ".jpg", ".gif", ".png", ".bmp"]
       else
         raise 'InvalidArguments'
       end
