@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'photofy'
-  s.version = '0.6.1'
-  s.date = '2017-09-07'
+  s.version = '0.6.2'
+  s.date = '2017-09-15'
   s.summary = "Photofy"
   s.description = <<-EOF
     A simple gem to add accessors on rails models for file upload of pictures/assets (which will be persisted on remote media's disk on object save).
