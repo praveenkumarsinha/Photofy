@@ -43,7 +43,8 @@ module Photofy
     #collage_persisted? >> true if provided file/data is stored on disk,
     #collage_store! >> to store provided  file/data on disk,
     #collage_destroy! >> to store destroy stored file/data from disk
-    #collage_mark_for_deletion >> to mark delete which will be carried on after save
+    #collage_mark_for_deletion >> to read if field is marked for deletion
+    #collage_mark_for_deletion = (true||1) >> to mark delete which will be carried on after save
     #
     #Options:
     #image_processor: a proc for image processing like Proc.new { |img| img.scale(25, 25) }
@@ -264,15 +265,20 @@ module Photofy
         end
       end
 
-      # to mark photo_field for deletion upon save(highest precedence than setter)
+      # to read if photo_field is marked for deletion
       define_method "#{photo_field}_mark_for_deletion" do
-        (@photo_file_delete_marker ||= {})[photo_field.to_sym] = true
+        (@photo_file_delete_marker ||= {})[photo_field.to_sym] rescue nil
+      end
+
+      # to mark photo_field for deletion upon save(highest precedence than setter)
+      define_method "#{photo_field}_mark_for_deletion=" do |value|
+        (@photo_file_delete_marker ||= {})[photo_field.to_sym] = value
       end
 
       # Deletes all photo_fields marked for deletion
       define_method 'delete_marked_photo_fields' do
         (@photo_file_delete_marker ||= {}).each do |photo_field, marked|
-          if marked
+          if marked == true or marked.to_i > 0
             send("#{photo_field}_destroy!")
             @photo_file_delete_marker[photo_field] = false
           end
