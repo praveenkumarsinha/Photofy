@@ -43,12 +43,13 @@ module Photofy
     #collage_persisted? >> true if provided file/data is stored on disk,
     #collage_store! >> to store provided  file/data on disk,
     #collage_destroy! >> to store destroy stored file/data from disk
+    #collage_mark_for_deletion >> to mark delete which will be carried on after save
     #
     #Options:
     #image_processor: a proc for image processing like Proc.new { |img| img.scale(25, 25) }
     #parent_photo_field: a parent photo field name to be used as source
     def photofy(photo_field, options = {})
-      (options ||={})[:message] ||= "Not from valid set of allowed file types"
+      (options ||={})[:message] ||= 'not from valid set of allowed file types'
 
       collect_photo_formats(photo_field, options)
 
@@ -66,6 +67,7 @@ module Photofy
       define_method 'initialize_photo_buffers' do
         @photo_file_buffer ||= {}
         @photo_file_ofn ||= {}
+        @photo_file_delete_marker ||= {}
       end
 
       define_method "#{photo_field}_path" do
@@ -262,7 +264,23 @@ module Photofy
         end
       end
 
+      # to mark photo_field for deletion upon save(highest precedence than setter)
+      define_method "#{photo_field}_mark_for_deletion" do
+        (@photo_file_delete_marker ||= {})[photo_field.to_sym] = true
+      end
+
+      # Deletes all photo_fields marked for deletion
+      define_method 'delete_marked_photo_fields' do
+        (@photo_file_delete_marker ||= {}).each do |photo_field, marked|
+          if marked
+            send("#{photo_field}_destroy!")
+            @photo_file_delete_marker[photo_field] = false
+          end
+        end
+      end
+
       send(:after_save, "#{photo_field}_store!".to_sym)
+      send(:after_save, :delete_marked_photo_fields) #Makes it last ro execute among callbacks hence it deletes (with utmost importance)
       send(:after_destroy, "#{photo_field}_destroy!".to_sym)
 
       @@photofied_flag = true
