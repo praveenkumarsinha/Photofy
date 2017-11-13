@@ -151,11 +151,12 @@ module Photofy
 
           file_upload.rewind
         elsif file_upload.class == String
+          file_upload_processed = file_upload.strip.chomp
 
           # For handling base 64 encoded image
-          if file_upload.match(/\Adata:([-\w]+\/[-\w\+\.]+)?;base64,/)
-            file_upload_parts = file_upload.match(/\Adata:([-\w]+\/[-\w\+\.]+)?;base64,(.*)/m) || []
-            extension = MIME::Types[file_upload_parts[1]].first.preferred_extension
+          if file_upload_processed.match(/\Adata:([-\w]+\/[-\w\+\.]+)?;base64,/)
+            file_upload_parts = file_upload_processed.match(/\Adata:([-\w]+\/[-\w\+\.]+)?;base64,(.*)/m) || []
+            extension = Mime::Type.lookup(file_upload_parts[1]).symbol.to_s
 
             unless self.class.photo_formats[photo_field].include?(".#{extension}")
               (@photo_fields_errors ||= {})[photo_field.to_sym] = options[:message]
